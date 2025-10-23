@@ -1,0 +1,4 @@
+body { font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+.navbar-brand { letter-spacing: 0.5px; }
+.card { border: none; border-radius: 14px; }
+.btn-danger { border-radius: 12px; }

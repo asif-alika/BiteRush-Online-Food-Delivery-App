@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body th:fragment="alerts">
+  <div class="container mt-3">
+    <div th:if="${param.registered}" class="alert alert-success">Registration successful. Please login.</div>
+    <div th:if="${param.added}" class="alert alert-success">Added to cart!</div>
+    <div th:if="${param.ordered}" class="alert alert-success">Order placed successfully!</div>
+    <div th:if="${param.deleted}" class="alert alert-warning">Deleted.</div>
+    <div th:if="${param.created}" class="alert alert-success">Created.</div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head('Register | BiteRush')"></head>
+<body class="bg-light">
+<div class="container d-flex justify-content-center align-items-center" style="min-height:100vh;">
+  <div class="card p-4 shadow" style="max-width:520px;width:100%">
+    <h3 class="mb-3">Create your account</h3>
+    <form th:action="@{/register}" th:object="${dto}" method="post">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+      <div class="row g-3">
+        <div class="col-12">
+          <label class="form-label">Full name</label>
+          <input class="form-control" th:field="*{fullName}" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Username</label>
+          <input class="form-control" th:field="*{username}" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" th:field="*{email}">
+        </div>
+        <div class="col-12">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" th:field="*{password}" required>
+        </div>
+      </div>
+      <button class="btn btn-danger w-100 mt-3">Register</button>
+      <div class="text-center mt-3">
+        <a th:href="@{/login}">Already have an account? Login</a>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>

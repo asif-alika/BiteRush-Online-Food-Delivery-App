@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head('Admin | Orders | BiteRush')"></head>
+<body>
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<section class="container my-5">
+  <h2 class="text-center mb-4">📦 Customer Orders</h2>
+
+  <div th:if="${#lists.isEmpty(orders)}" class="text-center text-muted">
+    <p>No orders placed yet.</p>
+  </div>
+
+  <div th:each="order : ${orders}" class="card mb-4 shadow-sm">
+    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+      <div>
+        <h5 class="mb-0">Order #<span th:text="${order.id}"></span></h5>
+        <small class="text-muted">
+          Placed on <span th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy hh:mm a')}"></span>
+        </small>
+      </div>
+      <span th:classappend="${order.status == 'PAID'} ? 'badge bg-success' : 'badge bg-warning text-dark'">
+        <span th:text="${order.status}"></span>
+      </span>
+    </div>
+
+    <div class="card-body">
+      <!-- Customer Info -->
+      <h6 class="text-secondary mb-2">Customer</h6>
+      <p>
+        <strong>Name:</strong> <span th:text="${order.user.fullName}"></span><br>
+        <strong>Email:</strong> <span th:text="${order.user.email}"></span><br>
+        <strong>Address:</strong>
+        <span th:text="${order.addressLine1}"></span>,
+        <span th:text="${order.addressLine2}"></span>,
+        <span th:text="${order.city}"></span> -
+        <span th:text="${order.zip}"></span>,
+        <span th:text="${order.state}"></span>
+      </p>
+
+      <!-- Order Items -->
+      <h6 class="text-secondary mt-4">Items Ordered</h6>
+      <table class="table table-sm table-bordered align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Food</th>
+            <th>Qty</th>
+            <th>Price (₹)</th>
+            <th>Subtotal (₹)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="item, iter : ${order.items}">
+            <td th:text="${iter.index + 1}"></td>
+            <td th:text="${item.foodItem.name}"></td>
+            <td th:text="${item.quantity}"></td>
+            <td th:text="${item.priceAtPurchase}"></td>
+            <td th:text="${item.quantity * item.priceAtPurchase}"></td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr class="table-secondary">
+            <td colspan="4" class="text-end"><strong>Total:</strong></td>
+            <td><strong th:text="${order.total}"></strong></td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <!-- Payment Info -->
+<h6 class="text-secondary mt-4">Payment Details</h6>
+<p>
+  <strong>Payment ID:</strong>
+  <span th:text="${order.paymentId != null ? order.paymentId : 'Pending'}"></span><br>
+  <strong>Status:</strong>
+  <span th:text="${order.status}"></span>
+</p>
+
+<!-- Mark as Delivered Button (visible only if status = PAID) -->
+<div th:if="${order.status == 'PAID'}" class="mt-3">
+  <form th:action="@{'/admin/orders/' + ${order.id} + '/delivered'}" method="post">
+    <button class="btn btn-success btn-sm">
+      Mark as Delivered
+    </button>
+  </form>
+</div>
+
+<!-- Delivered Badge -->
+<div th:if="${order.status == 'DELIVERED'}" class="mt-3">
+  <span class="badge bg-info text-dark p-2">Delivered ✅</span>
+</div>
+      
+</section>
+
+</body>
+</html>

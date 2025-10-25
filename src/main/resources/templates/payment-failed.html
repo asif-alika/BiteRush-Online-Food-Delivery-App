@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head('Payment Failed | BiteRush')"></head>
+<body>
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<section class="container my-5 text-center">
+  <div class="card shadow-lg p-5 mx-auto" style="max-width: 550px;">
+    <img src="/img/payment-failed.gif" alt="Failed" style="width: 100px;">
+    <h2 class="fw-bold text-danger mt-4" th:text="${errorTitle}">Payment Failed ❌</h2>
+    <p class="text-muted mt-2" th:text="${errorMessage}">
+      Something went wrong while processing your payment.
+    </p>
+
+    <hr class="my-4">
+
+    <p class="text-secondary">
+      Don’t worry — you can try again or contact our support team if the issue persists.
+    </p>
+
+    <div class="mt-4">
+      <a th:href="@{/cart}" class="btn btn-danger btn-lg">Try Again</a>
+      <a th:href="@{/contact}" class="btn btn-outline-secondary btn-lg ms-2">Contact Support</a>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

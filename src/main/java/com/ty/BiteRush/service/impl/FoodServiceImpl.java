@@ -34,6 +34,8 @@ public class FoodServiceImpl implements FoodService {
     public void delete(Long id) {
         if (foodRepository.existsById(id)) {
             foodRepository.deleteById(id);
+            foodRepository.flush(); // ✅ force DB synchronization
         }
     }
+
 }

@@ -18,77 +18,79 @@ public class AdminController {
 
     private final FoodService foodService;
 
+    // ✅ Show Admin Dashboard
     @GetMapping
     public String page(Model model) {
-        model.addAttribute("foods", foodService.listAll());
+        model.addAttribute("foods", foodService.listAll()); // always refetch from DB
         return "admin";
     }
 
-    /**
-     * ✅ Adds new food item with uploaded image (stored in /uploads/ directory)
-     */
+
+    // ✅ Add new food item
     @PostMapping("/food")
     public String create(@RequestParam String name,
                          @RequestParam String description,
                          @RequestParam double price,
                          @RequestParam("image") MultipartFile image) throws IOException {
 
-        // Create uploads folder if not exists
-        String uploadDir = "uploads/";
+        String uploadDir = System.getProperty("user.dir") + "/uploads/";
         Files.createDirectories(Paths.get(uploadDir));
 
-        // Save file with timestamped name to avoid conflicts
         String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-        Path filePath = Paths.get(uploadDir + fileName);
+        Path filePath = Paths.get(uploadDir, fileName);
 
         if (!image.isEmpty()) {
             Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("✅ Image saved to: " + filePath.toAbsolutePath());
         }
 
-        // Store accessible image URL
         String imageUrl = "/images/" + fileName;
 
-        // Save to DB
         FoodItem foodItem = FoodItem.builder()
                 .name(name)
                 .description(description)
                 .price(price)
                 .imageUrl(imageUrl)
+                .available(true)
                 .build();
 
         foodService.create(foodItem);
         return "redirect:/admin?created";
     }
 
-    /**
-     * ✅ Deletes food item from DB and also removes image file if present
-     */
+    // ✅ Delete food item + image safely
     @PostMapping("/food/delete/{id}")
     public String delete(@PathVariable Long id) {
         try {
             foodService.findById(id).ifPresent(food -> {
-                // Delete the associated image if exists
+                // Delete image if exists
                 if (food.getImageUrl() != null && food.getImageUrl().startsWith("/images/")) {
                     String fileName = food.getImageUrl().replace("/images/", "");
-                    Path imagePath = Paths.get("uploads", fileName);
+                    Path imagePath = Paths.get(System.getProperty("user.dir"), "uploads", fileName);
                     try {
-                        Files.deleteIfExists(imagePath);
-                        System.out.println("✅ Image deleted: " + imagePath);
+                        boolean deleted = Files.deleteIfExists(imagePath);
+                        System.out.println(deleted
+                                ? "🗑️ Deleted image: " + imagePath
+                                : "⚠️ Image not found: " + imagePath);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        System.err.println("❌ Error deleting image file: " + e.getMessage());
                     }
                 }
 
-                // Delete food from DB
-                foodService.delete(id);
-                System.out.println("✅ Food item deleted: ID " + id);
+                // Delete DB record
+                try {
+                    foodService.delete(id);
+                    System.out.println("✅ Food item deleted from DB: " + id);
+                } catch (Exception e) {
+                    System.err.println("❌ Error deleting DB record: " + e.getMessage());
+                }
             });
+
             return "redirect:/admin?deleted";
+
         } catch (Exception e) {
             e.printStackTrace();
             return "redirect:/admin?error";
         }
     }
-
-
 }

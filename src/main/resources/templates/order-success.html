@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head('Order Success | BiteRush')"></head>
+<body>
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<section class="container my-5 text-center">
+  <div class="card shadow-lg p-5 mx-auto" style="max-width: 600px;">
+    <div class="mb-4">
+      <img src="/img/success.gif" alt="Success" style="width: 90px;">
+    </div>
+
+    <h2 class="fw-bold text-success mb-3">Order Confirmed! 🎉</h2>
+    <p class="text-muted">Your delicious food is being prepared and will reach you soon.</p>
+
+    <hr class="my-4">
+
+    <div class="text-start">
+      <h5 class="fw-semibold mb-2">🧾 Order Details</h5>
+      <p>
+        <strong>Order ID:</strong> <span th:text="${orderId}"></span><br>
+        <strong>Payment ID:</strong> <span th:text="${paymentId}"></span><br>
+        <strong>Status:</strong> <span class="text-success">PAID</span>
+      </p>
+
+      <p>
+        <strong>Delivery Address:</strong><br>
+        <span th:text="${addressLine1}"></span><br>
+        <span th:text="${addressLine2}"></span><br>
+        <span th:text="${city}"></span> - <span th:text="${zip}"></span><br>
+        <span th:text="${state}"></span>
+      </p>
+    </div>
+
+    <hr class="my-4">
+
+    <h5 class="fw-semibold text-danger">
+      Total Paid: ₹<span th:text="${amount}"></span>
+    </h5>
+
+    <div class="mt-4">
+      <a th:href="@{/menu}" class="btn btn-danger btn-lg px-4">Back to Menu</a>
+      <a th:href="@{/orders}" class="btn btn-outline-secondary btn-lg ms-2">View My Orders</a>
+    </div>
+  </div>
+</section>
+
+<!-- Optional Auto Redirect -->
+<script th:inline="javascript">
+  setTimeout(() => {
+    window.location.href = /*[[@{/orders}]]*/ '/orders';
+  }, 10000); // redirect after 10 seconds
+</script>
+</body>
+</html>

@@ -1,18 +1,51 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body th:fragment="navbar">
+
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
   <div class="container">
+    <!-- Brand -->
     <a class="navbar-brand fw-bold text-danger" th:href="@{/menu}">BiteRush</a>
+
+    <!-- Mobile toggle -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
       <span class="navbar-toggler-icon"></span>
     </button>
+
+    <!-- Navbar links -->
     <div id="nav" class="collapse navbar-collapse">
       <ul class="navbar-nav me-auto">
-        <li class="nav-item"><a class="nav-link" th:href="@{/menu}">Menu</a></li>
-        <li class="nav-item"><a class="nav-link" th:href="@{/cart}">Cart</a></li>
-        <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a class="nav-link" th:href="@{/admin}">Admin</a></li>
+
+        <!-- Common Links -->
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/menu}">Menu</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/cart}">Cart</a>
+        </li>
+
+        <!-- Admin-Only Links -->
+        <li class="nav-item dropdown" sec:authorize="hasRole('ADMIN')">
+          <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
+            Admin
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+            <li>
+              <a class="dropdown-item" th:href="@{/admin}">
+                Manage Food Items
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" th:href="@{/admin/orders}">
+                View Customer Orders
+              </a>
+            </li>
+          </ul>
+        </li>
       </ul>
+
+      <!-- Logout button -->
       <div class="d-flex">
         <form th:action="@{/logout}" method="post">
           <button class="btn btn-outline-danger">Logout</button>
@@ -21,5 +54,6 @@
     </div>
   </div>
 </nav>
+
 </body>
 </html>

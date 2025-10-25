@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head('Secure Payment | BiteRush')"></head>
+<body>
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<section class="container my-5 text-center">
+  <h2 class="fw-bold">Secure Payment</h2>
+  <p class="text-muted">You’re almost done! Please complete your payment securely below.</p>
+
+  <div class="card shadow-sm p-4 mt-4 mx-auto" style="max-width: 480px;">
+    <h4 class="mb-3">🧾 Order Summary</h4>
+
+    <p><strong>Amount:</strong> ₹<span th:text="${amount}"></span></p>
+
+    <div class="text-start mt-3">
+      <strong>Delivery Address:</strong><br>
+      <span th:text="${addressLine1}"></span>,
+      <span th:text="${addressLine2}"></span><br>
+      <span th:text="${city}"></span> - <span th:text="${zip}"></span><br>
+      <span th:text="${state}"></span>
+    </div>
+
+    <button id="payButton" class="btn btn-danger w-100 mt-4">Pay Securely</button>
+  </div>
+
+  <a th:href="@{/cart}" class="btn btn-outline-secondary mt-3">Back to Cart</a>
+</section>
+
+<!-- ✅ Razorpay Checkout Script -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script th:inline="javascript">
+  const options = {
+    key: 'YOUR_KEY_ID', // ✅ Replace with your Razorpay Key ID
+    amount: [[${amount}]] * 100, // amount in paise
+    currency: 'INR',
+    name: 'BiteRush',
+    description: 'Food Order Payment',
+    order_id: '[[${razorOrderId}]]', // ✅ match backend model key
+
+    handler: function (response) {
+      // Send payment verification request to backend
+      fetch('/payment-success', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_signature: response.razorpay_signature,
+          orderId: '[[${orderId}]]'
+        })
+      })
+      .then(res => res.text())
+      .then(data => {
+        // Redirect based on backend response
+        if (data.includes("order-success") || data.includes("Payment verified")) {
+          window.location.href = '/order-success';
+        } else {
+          window.location.href = '/payment-failed';
+        }
+      })
+      .catch(err => {
+        console.error("Payment verification failed:", err);
+        window.location.href = '/payment-failed';
+      });
+    },
+
+    prefill: {
+      name: '[[${addressLine1}]]',
+      email: 'customer@example.com',
+      contact: '9999999999'
+    },
+
+    theme: { color: '#F37254' }
+  };
+
+  document.getElementById('payButton').onclick = function() {
+    const rzp = new Razorpay(options);
+    rzp.open();
+  };
+</script>
+</body>
+</html>

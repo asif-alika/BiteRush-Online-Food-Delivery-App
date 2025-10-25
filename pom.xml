@@ -73,6 +73,22 @@
       <scope>runtime</scope>
       <optional>true</optional>
     </dependency>
+    
+    <!-- Razor pay -->
+    <dependency>
+    <groupId>com.razorpay</groupId>
+    <artifactId>razorpay-java</artifactId>
+    <version>1.4.5</version>
+   </dependency>
+    
+    <!-- ✅ Spring Boot Starter for Sending Emails -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-mail</artifactId>
+</dependency>
+
+
+
 
     <!-- Testing -->
     <dependency>
